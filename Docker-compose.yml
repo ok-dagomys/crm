@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql
+    container_name: mysql
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${SQL_PASSWORD}
+    networks:
+      - backend
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: pma
+    environment:
+      - PMA_HOST=${SQL_HOST}
+      - PMA_USER=${SQL_USER}
+      - PMA_PASSWORD=${SQL_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - backend
+      - frontend
+
+volumes:
+  storage:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: ${MOUNT_DRIVE}
+      o: ${MOUNT_OPTIONS}
+
+networks:
+  backend:
+  frontend:

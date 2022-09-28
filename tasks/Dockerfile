@@ -1,0 +1,20 @@
+FROM python:latest
+
+RUN mkdir /app
+COPY ./pyproject.toml /app
+COPY .env /app
+
+WORKDIR /app
+
+RUN apt -y update
+RUN apt -y full-upgrade
+RUN apt -y dist-upgrade
+RUN apt -y --purge autoremove
+RUN apt -y autoclean
+
+RUN pip3 install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install
+
+ENTRYPOINT ["python"]
+CMD ["main.py"]

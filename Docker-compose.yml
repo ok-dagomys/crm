@@ -26,6 +26,18 @@ services:
       - backend
       - frontend
 
+  tasks:
+    build:
+      context: .
+      dockerfile: ./tasks/Dockerfile
+    container_name: tasks
+    tty: true
+    volumes:
+      - storage:/mnt
+      - ./tasks:/app/tasks
+    networks:
+      - backend
+
 volumes:
   storage:
     driver: local

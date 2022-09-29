@@ -1,13 +1,7 @@
 FROM python:latest
 
-RUN mkdir /app
 COPY ./pyproject.toml /app
 COPY .env /app
-
-RUN mkdir /app/tasks
-COPY tasks/purchase.py /app/tasks
-COPY tasks/sql.py /app/tasks
-
 WORKDIR /app/tasks
 
 RUN apt -y update

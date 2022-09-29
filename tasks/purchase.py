@@ -1,11 +1,14 @@
 import asyncio
+import logging
 import os
 from datetime import datetime
+from time import sleep
 
 import aspose.words as aw
 import docx
 import pandas as pd
 from dotenv import load_dotenv
+from tqdm import tqdm
 
 from sql import add_to_db
 
@@ -13,6 +16,7 @@ load_dotenv()
 task_source = os.getenv('TASK_SOURCE')
 task_registry = os.getenv('TASK_REGISTRY')
 task_archive = os.getenv('TASK_ARCHIVE')
+logging.basicConfig(level=logging.INFO)
 file_list = []
 
 
@@ -87,6 +91,13 @@ def transfer_to_archive(f_docx, f_date):
         os.mkdir(f'{task_archive}/{f_date.year}')
     os.replace(f'{task_source}/{f_docx}',
                f'{task_archive}/{f_date.year}/{f_date.strftime("%Y.%m.%d")} - {f_docx.split("+", 5)[-1].strip()}')
+    logging.info(f' Task {f_docx.split("+", 5)[-1].strip()} closed')
+    with tqdm(total=100) as pbar:
+        for i in range(10):
+            sleep(0.1)
+            pbar.update(10)
+            pbar.set_description("Transferring...")
+    logging.info(f' Saved in archive as {f_date.strftime("%Y.%m.%d")} - {f_docx.split("+", 5)[-1].strip()}')
     add_to_db(f'Заявка {f_docx.split("+", 5)[-1].strip()} перемещена в архив')
 
 
@@ -107,7 +118,7 @@ async def scan_tasks():
                 transfer_to_archive(file, date)
 
     add_to_registry(file_list)
-    print(f'Дата последней проверки: {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
+    logging.info(f' Last tasks check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
 
 
 async def check_task():

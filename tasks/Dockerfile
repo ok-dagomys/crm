@@ -1,5 +1,6 @@
-FROM python:latest
+FROM python:3.10
 
+RUN mkdir app
 COPY ./pyproject.toml /app
 COPY .env /app
 WORKDIR /app/tasks

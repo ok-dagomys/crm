@@ -2,11 +2,13 @@ import asyncio
 
 import aioschedule
 
-from purchase import check_task
+from phonebook import check_phonebook
+from tasks import check_task
 
 
 async def scheduler():
     aioschedule.every(1).to(5).minutes.do(check_task)
+    aioschedule.every(1).to(5).minutes.do(check_phonebook)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(0.1)

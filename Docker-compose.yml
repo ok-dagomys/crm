@@ -27,16 +27,16 @@ services:
       - backend
       - frontend
 
-  tasks:
+  jobs:
     build:
       context: .
-      dockerfile: ./tasks/Dockerfile
-    container_name: tasks
-    tty: true
+      dockerfile: jobs/Dockerfile
+    container_name: jobs
+#    tty: true
     volumes:
       - storage:/mnt/storage
       - share:/mnt/share
-      - ./tasks:/app/tasks
+      - ./jobs:/app/jobs
     networks:
       - backend
 
@@ -46,7 +46,7 @@ volumes:
     driver: local
     driver_opts:
       type: cifs
-      device: ${MOUNT_DRIVE}
+      device: ${MOUNT_STORAGE}
       o: ${MOUNT_OPTIONS}
 
   share:

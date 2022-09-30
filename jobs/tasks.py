@@ -118,12 +118,12 @@ async def scan_tasks():
                 transfer_to_archive(file, date)
 
     add_to_registry(file_list)
-    logging.info(f' Last tasks check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
 
 
 async def check_task():
     task = asyncio.create_task(scan_tasks())
     await task
+    logging.info(f' Last tasks check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
     await asyncio.sleep(0.1)
 
 

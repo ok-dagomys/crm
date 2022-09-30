@@ -11,8 +11,11 @@ sql_port = os.getenv('SQL_PORT')
 sql_database = os.getenv('SQL_DATABASE')
 
 engine = create_engine(
-    url=f"mysql+pymysql://{sql_user}:{sql_password}@{sql_host}:{sql_port}/{sql_database}",
-    echo=True)
+    url=f"mysql+pymysql://"
+        f"{sql_user}:"
+        f"{sql_password}@{sql_host}:"
+        f"{sql_port}/"
+        f"{sql_database}")
 
 meta = MetaData()
 

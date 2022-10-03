@@ -32,11 +32,20 @@ services:
       context: .
       dockerfile: jobs/Dockerfile
     container_name: jobs
-#    tty: true
     volumes:
       - storage:/mnt/storage
       - share:/mnt/share
       - ./jobs:/app/jobs
+    networks:
+      - backend
+
+  asterisk:
+    build:
+      context: .
+      dockerfile: asterisk/Dockerfile
+    container_name: asterisk
+    volumes:
+      - ./asterisk:/app/asterisk
     networks:
       - backend
 

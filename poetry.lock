@@ -91,6 +91,17 @@ pytz = ">=2020.1"
 test = ["hypothesis (>=5.5.3)", "pytest (>=6.0)", "pytest-xdist (>=1.31)"]
 
 [[package]]
+name = "panoramisk"
+version = "1.4"
+description = "asyncio based library to play with asterisk"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+test = ["coverage", "coveralls", "pytest", "pytest-asyncio"]
+
+[[package]]
 name = "PyMySQL"
 version = "1.0.2"
 description = "Pure Python MySQL Driver"
@@ -211,7 +222,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10,<3.11"
-content-hash = "33bed576195e6e3343e8a1b91186208d09b30b222a4eb7e5bddcca5df1e23b22"
+content-hash = "68b978d67e832497a2582295d3f219e930d82924559440e265db90d2cc0eb138"
 
 [metadata.files]
 aioschedule = [
@@ -414,6 +425,10 @@ pandas = [
     {file = "pandas-1.4.4-cp39-cp39-win32.whl", hash = "sha256:050aada67a5ec6699a7879e769825b510018a95fb9ac462bb1867483d0974a97"},
     {file = "pandas-1.4.4-cp39-cp39-win_amd64.whl", hash = "sha256:8d4d2fe2863ecddb0ba1979bdda26c8bc2ea138f5a979abe3ba80c0fa4015c91"},
     {file = "pandas-1.4.4.tar.gz", hash = "sha256:ab6c0d738617b675183e5f28db32b5148b694ad9bba0a40c3ea26d96b431db67"},
+]
+panoramisk = [
+    {file = "panoramisk-1.4-py3-none-any.whl", hash = "sha256:936bb967eb60edf860b406124f30f086713ac21f55c5e4e322941ace24430dbb"},
+    {file = "panoramisk-1.4.tar.gz", hash = "sha256:345d4c3b6a60e54beb601136ef2bba8fe2023c3a5dbe89e0b0d7dd4aa96d535a"},
 ]
 PyMySQL = [
     {file = "PyMySQL-1.0.2-py3-none-any.whl", hash = "sha256:41fc3a0c5013d5f039639442321185532e3e2c8924687abe6537de157d403641"},

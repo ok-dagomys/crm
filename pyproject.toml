@@ -18,6 +18,8 @@ PyMySQL = "^1.0.2"
 openpyxl = "^3.0.10"
 tqdm = "^4.64.1"
 panoramisk = "^1.4"
+aiohttp = "^3.8.3"
+bs4 = "^0.0.1"
 
 
 [build-system]

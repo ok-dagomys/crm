@@ -28,18 +28,16 @@ async def scan_phonebook():
                 pbar.set_description("Copying...")
         filecmp.clear_cache()
 
-        status = 'Phonebook updated'
-        logging.info(status)
+        status = 'Updated'
     else:
-        status = 'Phonebook is actual'
-        logging.info(status)
+        status = 'Actual'
     return status
 
 
 async def check_phonebook():
     task = asyncio.create_task(scan_phonebook())
     await task
-    logging.info(f' Last phonebook check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
+    logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Phonebook checked | {task.result()}\n')
     await asyncio.sleep(0.1)
 
 

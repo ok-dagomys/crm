@@ -123,7 +123,7 @@ async def scan_tasks():
 async def check_task():
     task = asyncio.create_task(scan_tasks())
     await task
-    logging.info(f' Last tasks check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
+    logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Tasks checked\n')
     await asyncio.sleep(0.1)
 
 

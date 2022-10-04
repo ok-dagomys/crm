@@ -6,6 +6,8 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
+logging.basicConfig(level=logging.INFO)
+
 
 async def covid_request():
     async with aiohttp.ClientSession() as session:
@@ -29,14 +31,14 @@ async def covid_request():
 
             covid = f'Прирост за день:\n{day}\nОбщее число заражений:\n{total}\nВ Краснодарском крае:\n{reg}'
 
-            print(covid)
+            # print(covid)
             return covid
 
 
 async def check_covid_info():
     task = asyncio.create_task(covid_request())
     await task
-    logging.info(f' Last covid_info check | {datetime.now().strftime("%Y.%m.%d в %H:%M:%S")}')
+    logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Covid checked\n')
     await asyncio.sleep(0.1)
 
 

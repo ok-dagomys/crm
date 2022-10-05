@@ -36,6 +36,7 @@ services:
       - storage:/mnt/storage
       - share:/mnt/share
       - ./jobs:/app/jobs
+      - ./sql:/app/sql
     networks:
       - backend
 
@@ -46,6 +47,7 @@ services:
     container_name: asterisk
     volumes:
       - ./asterisk:/app/asterisk
+      - ./sql:/app/sql
     networks:
       - backend
 

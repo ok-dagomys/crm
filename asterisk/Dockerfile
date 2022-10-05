@@ -1,7 +1,7 @@
 FROM python:3.10
 
 RUN mkdir app
-COPY ./pyproject.toml /app
+COPY pyproject.toml /app
 COPY .env /app
 WORKDIR /app/asterisk
 
@@ -15,5 +15,6 @@ RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install
 
+ENV PYTHONPATH /app
 ENTRYPOINT ["python"]
 CMD ["ami.py"]

@@ -10,7 +10,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-from sql import add_to_db
+from sql.crud import add_to_db
 
 load_dotenv()
 task_source = os.getenv('TASK_SOURCE')
@@ -91,7 +91,7 @@ def transfer_to_archive(f_docx, f_date):
         os.mkdir(f'{task_archive}/{f_date.year}')
     os.replace(f'{task_source}/{f_docx}',
                f'{task_archive}/{f_date.year}/{f_date.strftime("%Y.%m.%d")} - {f_docx.split("+", 5)[-1].strip()}')
-    logging.info(f' Task {f_docx.split("+", 5)[-1].strip()} closed')
+    logging.info(f' Task {f_docx.split("+", 5)[-1].strip()} completed')
     with tqdm(total=100) as pbar:
         for i in range(10):
             sleep(0.1)

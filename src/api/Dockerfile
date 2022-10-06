@@ -3,7 +3,7 @@ FROM python:3.10
 RUN mkdir app
 COPY pyproject.toml /app
 COPY .env /app
-WORKDIR /app/asterisk
+WORKDIR /app/src/api
 
 RUN apt -y update
 RUN apt -y full-upgrade
@@ -17,4 +17,4 @@ RUN poetry install
 
 ENV PYTHONPATH /app
 ENTRYPOINT ["python"]
-CMD ["ami.py"]
+CMD ["main.py"]

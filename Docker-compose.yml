@@ -9,6 +9,8 @@ services:
       - ./docker/mysql/data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${SQL_PASSWORD}
+    ports:
+      - "6033:3306"
     networks:
       - backend
 
@@ -27,27 +29,43 @@ services:
       - backend
       - frontend
 
+  api:
+    build:
+      context: .
+      dockerfile: src/api/Dockerfile
+    container_name: api
+    volumes:
+      - ./src/api:/app/src/api
+      - ./src/database:/app/src/database
+    depends_on:
+      - mysql
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+      - frontend
+
   jobs:
     build:
       context: .
-      dockerfile: jobs/Dockerfile
+      dockerfile: src/jobs/Dockerfile
     container_name: jobs
     volumes:
       - storage:/mnt/storage
       - share:/mnt/share
-      - ./jobs:/app/jobs
-      - ./sql:/app/sql
+      - ./src/jobs:/app/src/jobs
+      - ./src/database:/app/src/database
     networks:
       - backend
 
   asterisk:
     build:
       context: .
-      dockerfile: asterisk/Dockerfile
+      dockerfile: src/asterisk/Dockerfile
     container_name: asterisk
     volumes:
-      - ./asterisk:/app/asterisk
-      - ./sql:/app/sql
+      - ./src/asterisk:/app/src/asterisk
+      - ./src/database:/app/src/database
     networks:
       - backend
 

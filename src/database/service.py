@@ -4,7 +4,7 @@ from fastapi import HTTPException
 def check_exist_in_db(db, model, model_filter, schema_filter):
     db_model = db.query(model).filter(model_filter == schema_filter).first()
     if db_model:
-        raise HTTPException(status_code=302, detail="No changes")
+        raise HTTPException(status_code=304, detail="No changes")
 
 
 def check_name_exist_in_db(db, schema, model):

@@ -38,7 +38,7 @@ services:
       - ./src/api:/app/src/api
       - ./src/database:/app/src/database
     depends_on:
-      - mysql
+      - phpmyadmin
     ports:
       - "8000:8000"
     networks:

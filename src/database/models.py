@@ -16,5 +16,5 @@ class UserModel(Base):
 class WeatherModel(Base):
     __tablename__ = 'weather'
     id = Column(Integer, primary_key=True, index=True, unique=True)
-    forecast = Column(String(50), unique=True)
+    forecast = Column(String(50))
     date = Column(DateTime, default=datetime.now())

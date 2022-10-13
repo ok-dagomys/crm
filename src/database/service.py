@@ -1,4 +1,9 @@
+from datetime import datetime
+
 from fastapi import HTTPException
+
+from src.database.models import WeatherModel
+from src.database.sql import SessionLocal
 
 
 def check_exist_in_db(db, model, model_filter, schema_filter):
@@ -18,3 +23,16 @@ def add_to_db(db, model, new_model):
         db.add(new_model)
         db.commit()
         db.refresh(new_model)
+
+
+def weather_to_db(data):
+    with SessionLocal.begin() as session:
+        check_model = session \
+            .query(WeatherModel) \
+            .order_by(WeatherModel.id.desc()) \
+            .filter_by(forecast=data).first()
+        if not check_model:
+            session.add(WeatherModel(forecast=data))
+        else:
+            if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
+                session.add(WeatherModel(forecast=data))

@@ -2,6 +2,17 @@ version: "3.8"
 
 services:
 
+  asterisk:
+    build:
+      context: .
+      dockerfile: src/asterisk/Dockerfile
+    container_name: asterisk
+    volumes:
+      - ./src/asterisk:/app/src/asterisk
+      - ./src/database:/app/src/database
+    networks:
+      - backend
+
   mysql:
     image: mysql:latest
     container_name: mysql
@@ -55,19 +66,26 @@ services:
       - share:/mnt/share
       - ./src/jobs:/app/src/jobs
       - ./src/database:/app/src/database
+    depends_on:
+      - asterisk
+      - api
     networks:
       - backend
 
-  asterisk:
+  test:
     build:
       context: .
-      dockerfile: src/asterisk/Dockerfile
-    container_name: asterisk
+      dockerfile: src/test/Dockerfile
+    container_name: test
+    tty: true
     volumes:
-      - ./src/asterisk:/app/src/asterisk
+      - storage:/mnt/storage
+      - share:/mnt/share
+      - ./src/test:/app/src/test
       - ./src/database:/app/src/database
     networks:
       - backend
+      - frontend
 
 volumes:
 

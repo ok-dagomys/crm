@@ -4,7 +4,7 @@ from datetime import datetime
 import aiohttp
 import asyncio
 
-from src.jobs.curl import send_curl
+from src.database.service import weather_to_db
 
 logging.basicConfig(level=logging.INFO)
 
@@ -24,7 +24,8 @@ async def weather_request():
             async with session.get(url, params=weather_parameters, ssl=False) as response:
                 forecast = await response.text() if response.status == 200 else f'Cannot connect to host: {url}'
                 # print(f'Weather forecast {forecast} in {city}')
-                send_curl(data_dict={"forecast": forecast}, route='weather')
+                # send_curl(data_dict={"forecast": forecast}, route='weather')
+                weather_to_db(forecast)
                 await asyncio.sleep(0.1)
                 return forecast
 

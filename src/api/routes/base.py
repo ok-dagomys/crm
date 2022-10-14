@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from src.api.schemas.users import User, UserCreate
 from src.api.schemas.weather import Weather, WeatherCreate
 from src.database.models import UserModel, WeatherModel
-from src.database.service import add_to_db, check_exist_in_db
+from src.database.service import add_to_db
 from src.database.sql import get_db
 
 
@@ -28,11 +28,6 @@ weather = add_route(Weather, WeatherCreate, WeatherModel, 'weather')
 
 @weather.post("", response_model=Weather, status_code=201)
 def create_one(response: Response, request: Request, weather_schema: WeatherCreate, db: Session = Depends(get_db)):
-    check_exist_in_db(
-        db=db,
-        model=WeatherModel,
-        model_filter=WeatherModel.forecast,
-        schema_filter=weather_schema.forecast)
     forecast = WeatherModel(forecast=weather_schema.forecast)
     add_to_db(db=db, model=WeatherModel, new_model=forecast)
     response.headers["Location"] = request.url._url

@@ -1,6 +1,9 @@
+import json
 from datetime import datetime
 
+import requests
 from fastapi import HTTPException
+from requests.structures import CaseInsensitiveDict
 
 from src.database.models import WeatherModel
 from src.database.sql import SessionLocal
@@ -15,7 +18,7 @@ def check_exist_in_db(db, model, model_filter, schema_filter):
 def check_name_exist_in_db(db, schema, model):
     db_model = db.query(model).filter(model.name == schema.name).first()
     if db_model:
-        raise HTTPException(status_code=400, detail=f"{schema.name} already exist")
+        raise HTTPException(status_code=302, detail=f"{schema.name} already exist")
 
 
 def add_to_db(db, model, new_model):
@@ -25,6 +28,18 @@ def add_to_db(db, model, new_model):
         db.refresh(new_model)
 
 
+def send_curl(data_dict, route):
+    url = f"http://api:8000/{route}"
+
+    headers = CaseInsensitiveDict()
+    headers["accept"] = "application/json"
+    headers["Content-Type"] = "application/json"
+
+    data = json.dumps(data_dict)
+
+    return requests.post(url, headers=headers, data=data)
+
+
 def weather_to_db(data):
     with SessionLocal.begin() as session:
         check_model = session \
@@ -32,7 +47,8 @@ def weather_to_db(data):
             .order_by(WeatherModel.id.desc()) \
             .filter_by(forecast=data).first()
         if not check_model:
-            session.add(WeatherModel(forecast=data))
+            # session.add(WeatherModel(forecast=data))
+            send_curl(data_dict={"forecast": data}, route='weather')
         else:
             if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
-                session.add(WeatherModel(forecast=data))
+                send_curl(data_dict={"forecast": data}, route='weather')

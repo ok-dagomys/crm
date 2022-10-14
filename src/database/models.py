@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from sqlalchemy import Column, Boolean, Integer, String, DateTime
+from sqlalchemy import Column, Boolean, Integer, String, DateTime, func
 
 from src.database.sql import Base
 
@@ -17,4 +15,4 @@ class WeatherModel(Base):
     __tablename__ = 'weather'
     id = Column(Integer, primary_key=True, index=True, unique=True)
     forecast = Column(String(50))
-    date = Column(DateTime, default=datetime.now())
+    date = Column(DateTime, default=func.now())

@@ -10,7 +10,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
 
-
 load_dotenv()
 task_source = os.getenv('TASK_SOURCE')
 task_registry = os.getenv('TASK_REGISTRY')

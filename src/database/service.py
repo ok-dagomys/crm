@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from requests.structures import CaseInsensitiveDict
 
 from src.database.models import WeatherModel, CovidModel
-from src.database.sql import SessionLocal
+from src.database.sql import SessionLocal, engine
 
 
 def check_exist_in_db(db, model, model_filter, schema_filter):
@@ -65,3 +65,13 @@ def covid_to_db(data):
         else:
             if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
                 send_curl(data_dict={"prognosis": data}, route='covid')
+
+
+def phonebook_to_db(df):
+    with engine.begin() as connection:
+        df.to_sql('phonebook', con=connection, if_exists='replace')
+
+
+def call_to_db(df):
+    with engine.begin() as connection:
+        df.to_sql('calls', con=connection, if_exists='append')

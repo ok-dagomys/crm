@@ -1,9 +1,13 @@
 import asyncio
 import logging
 import os
+from datetime import datetime
+
+import pandas as pd
 from dotenv import load_dotenv
 from panoramisk import Manager, Message
 
+from src.database.service import call_to_db
 
 try:
     load_dotenv()
@@ -64,6 +68,10 @@ async def callback(mngr: Manager, msg: Message):
             call[msg.CallerIDNum] = 'dial'
             # print(call)
             logging.info(f'Incoming call\nfrom number: {msg.CallerIDNum}\nto number: {msg.Exten}')
+
+            calls = [[msg.CallerIDNum, msg.Exten, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
+            df = pd.DataFrame(calls, columns=['from_number', 'to_number', 'date'])
+            call_to_db(df)
     await asyncio.sleep(1)
 
 

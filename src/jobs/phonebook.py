@@ -5,8 +5,11 @@ import os
 import shutil
 from datetime import datetime
 
+import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
+
+from src.database.service import phonebook_to_db
 
 load_dotenv()
 dst = os.getenv('PHONEBOOK_DESTINATION')
@@ -14,6 +17,46 @@ src = os.getenv('PHONEBOOK_SOURCE')
 date = datetime.now().strftime('%Y-%m-%d')
 time = datetime.now().strftime('%H:%M:%S')
 logging.basicConfig(level=logging.INFO)
+
+
+async def filter_phonebook():
+    xl = pd.ExcelFile(dst)
+    sheets = xl.sheet_names
+    sheets.remove('Тетьково')
+
+    df = pd.DataFrame()
+    rem_words = ['Столбец1', 'Столбец2', 'Столбец3', 'Столбец4', 'Столбец5', 'Столбец6', 'Столбец7',
+                 'Фамилия', 'Имя Отчество', 'Должность', 'Отдел (служба)', 'СО № 7',
+                 'Внутренний телефон', 'Городской телефон', 'Мобильный телефон']
+    for sheet in sheets:
+        data = pd.read_excel(xl, sheet_name=sheet, header=None, index_col=None)
+        # df = df.append(data)
+        df = pd.concat([df, data])
+    for word in rem_words:
+        df = df.mask(df == word)
+    xl.close()
+
+    df = df[[1, 2, 3, 4, 5, 6, 7]].dropna(axis=0, how='all')
+    df = df[[1, 2, 3, 4, 5, 6, 7]].fillna('', axis=1)
+    df.columns = ['name', 'surname', 'role', 'department', 'number', 'work', 'mobile']
+    df = df.replace('-', '', regex=True).astype(str).reset_index(drop=True)
+    df = df.drop(df[(df['number'] == '') & (df['work'] == '') & (df['mobile'] == '')]
+                 .index, axis=0).reset_index(drop=True)
+
+    def column_filter(column_name):
+        if column_name in ['number', 'work', 'mobile']:
+            df[column_name] = df[column_name].apply(lambda x: x.replace('(факс)', '').split())
+            df[column_name] = df[column_name].apply(lambda x: ','.join(map(str, x)).replace(',', ', '))
+        else:
+            df[column_name] = df[column_name].apply(lambda x: x.split())
+            df[column_name] = df[column_name].apply(lambda x: ' '.join(map(str, x)).replace('"', "'"))
+
+    for name in df.columns:
+        column_filter(name)
+
+    phonebook_to_db(df)
+    await asyncio.sleep(0.1)
+    return df
 
 
 async def scan_phonebook():
@@ -28,6 +71,8 @@ async def scan_phonebook():
                 pbar.set_description("Copying...")
         filecmp.clear_cache()
 
+        await filter_phonebook()
+        await asyncio.sleep(0.1)
         status = 'Updated'
     else:
         status = 'Actual'

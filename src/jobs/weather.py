@@ -24,8 +24,6 @@ async def weather_request():
             async with session.get(url, params=weather_parameters, ssl=False) as response:
                 forecast = await response.text() if response.status == 200 else f'Cannot connect to host: {url}'
                 # print(f'Weather forecast {forecast} in {city}')
-                # send_curl(data_dict={"forecast": forecast}, route='weather')
-                weather_to_db(forecast)
                 await asyncio.sleep(0.1)
                 return forecast
 
@@ -36,6 +34,7 @@ async def weather_request():
 async def check_weather():
     task = asyncio.create_task(weather_request())
     await task
+    weather_to_db(task.result())
     logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Weather checked\n')
     await asyncio.sleep(0.1)
 

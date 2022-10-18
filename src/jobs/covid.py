@@ -6,6 +6,8 @@ import aiohttp
 import asyncio
 from bs4 import BeautifulSoup
 
+from src.database.service import covid_to_db
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -38,6 +40,7 @@ async def covid_request():
 async def check_covid_info():
     task = asyncio.create_task(covid_request())
     await task
+    covid_to_db(task.result())
     logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Covid checked\n')
     await asyncio.sleep(0.1)
 

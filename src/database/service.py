@@ -5,7 +5,7 @@ import requests
 from fastapi import HTTPException
 from requests.structures import CaseInsensitiveDict
 
-from src.database.models import WeatherModel
+from src.database.models import WeatherModel, CovidModel
 from src.database.sql import SessionLocal
 
 
@@ -52,3 +52,16 @@ def weather_to_db(data):
         else:
             if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
                 send_curl(data_dict={"forecast": data}, route='weather')
+
+
+def covid_to_db(data):
+    with SessionLocal.begin() as session:
+        check_model = session \
+            .query(CovidModel) \
+            .order_by(CovidModel.id.desc()) \
+            .filter_by(prognosis=data).first()
+        if not check_model:
+            send_curl(data_dict={"prognosis": data}, route='covid')
+        else:
+            if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
+                send_curl(data_dict={"prognosis": data}, route='covid')

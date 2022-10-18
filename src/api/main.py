@@ -7,7 +7,7 @@ from fastapi import APIRouter, FastAPI
 from fastapi.testclient import TestClient
 from starlette.middleware.cors import CORSMiddleware
 
-from src.api.routes.base import users, weather
+from src.api.routes.base import users, weather, covid
 from src.api.routes.security import security
 
 load_dotenv()
@@ -32,6 +32,7 @@ def welcome_page():
 main_router = APIRouter()
 main_router.include_router(users)
 main_router.include_router(weather)
+main_router.include_router(covid)
 main_router.include_router(security, prefix='/security', tags=['Security'])
 
 app.include_router(main_router)

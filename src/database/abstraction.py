@@ -4,4 +4,4 @@ from src.database.sql import Base
 if Base and models:
     pass
 else:
-    raise NameError('Need add Base, UserModel')
+    raise NameError('Need add Models')

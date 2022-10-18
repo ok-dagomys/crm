@@ -16,3 +16,10 @@ class WeatherModel(Base):
     id = Column(Integer, primary_key=True, index=True, unique=True)
     forecast = Column(String(50))
     date = Column(DateTime, default=func.now())
+
+
+class CovidModel(Base):
+    __tablename__ = 'covid'
+    id = Column(Integer, primary_key=True, index=True, unique=True)
+    prognosis = Column(String(200))
+    date = Column(DateTime, default=func.now())

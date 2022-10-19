@@ -10,6 +10,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+from src.database.service import task_to_db
+
 load_dotenv()
 task_source = os.getenv('TASK_SOURCE')
 task_registry = os.getenv('TASK_REGISTRY')
@@ -96,6 +98,7 @@ def transfer_to_archive(f_docx, f_date):
             pbar.update(10)
             pbar.set_description("Transferring...")
     logging.info(f' Saved in archive as {f_date.strftime("%Y.%m.%d")} - {f_docx.split("+", 5)[-1].strip()}')
+    task_to_db(f_docx.split("+", 5)[-1].strip(), 'Заявка исполнена и перенесена в архив')
 
 
 async def scan_tasks():

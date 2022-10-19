@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+import pandas as pd
 import requests
 from fastapi import HTTPException
 from requests.structures import CaseInsensitiveDict
@@ -72,6 +73,28 @@ def phonebook_to_db(df):
         df.to_sql('phonebook', con=connection, if_exists='replace')
 
 
-def call_to_db(df):
+def task_to_db(file, status):
     with engine.begin() as connection:
-        df.to_sql('calls', con=connection, if_exists='append')
+        tasks = [[file, status, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
+        df = pd.DataFrame(tasks, columns=['file', 'status', 'date'])
+        df.to_sql('tasks', con=connection, if_exists='append', index=False)
+
+
+def call_to_db(caller, number):
+    with engine.begin() as connection:
+        calls = [[caller, number, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
+        df = pd.DataFrame(calls, columns=['from_number', 'to_number', 'date'])
+        df.to_sql('calls', con=connection, if_exists='append', index=False)
+
+
+async def caller_recognition(caller, number):
+    with engine.begin() as connection:
+        df = pd.read_sql('calls', con=connection)
+
+    recognition = df[df['number'].str.contains(caller)]
+
+    if recognition.shape[0] > 0:
+        return f'Входящий звонок\nс номера: {caller}\nна номер: {number}' \
+               f'\nот: {recognition.iloc[0]["role"]}\n{recognition.iloc[0]["name"]} {recognition.iloc[0]["surname"]}\n'
+    else:
+        return f'Входящий звонок\nс номера: {caller}\nна номер: {number}'

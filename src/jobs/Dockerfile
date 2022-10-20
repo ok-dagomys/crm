@@ -1,8 +1,9 @@
 FROM python:3.10
 
 RUN mkdir app
-COPY pyproject.toml /app
 COPY .env /app
+COPY cfg.py /app
+COPY pyproject.toml /app
 WORKDIR /app/src/jobs
 
 RUN apt -y update

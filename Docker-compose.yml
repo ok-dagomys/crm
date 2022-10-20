@@ -35,7 +35,7 @@ services:
     container_name: pma
     environment:
       TZ: ${DOCKER_TZ}
-      PMA_HOST: ${SQL_HOST}
+      PMA_HOST: ${PMA_HOST}
       PMA_USER: ${SQL_USER}
       PMA_PASSWORD: ${SQL_PASSWORD}
     ports:
@@ -59,7 +59,7 @@ services:
     depends_on:
       - phpmyadmin
     ports:
-      - "8000:8000"
+      - "8008:8000"
     networks:
       - backend
       - frontend

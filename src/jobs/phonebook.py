@@ -6,21 +6,19 @@ import shutil
 from datetime import datetime
 
 import pandas as pd
-from dotenv import load_dotenv
 from tqdm import tqdm
 
+from cfg import phonebook_source, phonebook_destination
 from src.database.service import phonebook_to_db
 
-load_dotenv()
-dst = os.getenv('PHONEBOOK_DESTINATION')
-src = os.getenv('PHONEBOOK_SOURCE')
+
 date = datetime.now().strftime('%Y-%m-%d')
 time = datetime.now().strftime('%H:%M:%S')
 logging.basicConfig(level=logging.INFO)
 
 
 async def filter_phonebook():
-    xl = pd.ExcelFile(dst)
+    xl = pd.ExcelFile(phonebook_destination)
     sheets = xl.sheet_names
     sheets.remove('Тетьково')
 
@@ -60,10 +58,10 @@ async def filter_phonebook():
 
 
 async def scan_phonebook():
-    if not os.path.exists(dst) or not filecmp.cmp(src, dst):
+    if not os.path.exists(phonebook_destination) or not filecmp.cmp(phonebook_source, phonebook_destination):
         logging.info('Phonebook has a new version on server')
 
-        shutil.copy2(src, dst, follow_symlinks=False)
+        shutil.copy2(phonebook_source, phonebook_destination, follow_symlinks=False)
         with tqdm(total=100) as pbar:
             for i in range(10):
                 await asyncio.sleep(0.1)

@@ -1,19 +1,17 @@
 import asyncio
 import logging
-import os
 
-from dotenv import load_dotenv
 from panoramisk import Manager, Message
 
+from cfg import ami_host, ami_port, ami_username, ami_secret
 from src.database.service import call_to_db
 
 try:
-    load_dotenv()
     manager = Manager(
-        host=os.getenv('AMI_HOST'),
-        port=os.getenv('AMI_PORT'),
-        username=os.getenv('AMI_USERNAME'),
-        secret=os.getenv('AMI_SECRET'),
+        host=ami_host,
+        port=ami_port,
+        username=ami_username,
+        secret=ami_secret,
         ping_delay=10,  # Delay after start
         ping_interval=10,  # Periodically ping AMI (dead or alive)
         reconnect_timeout=2)  # Timeout reconnect if connection lost

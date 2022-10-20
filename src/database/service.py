@@ -42,30 +42,38 @@ def send_curl(data_dict, route):
 
 
 def weather_to_db(data):
-    with SessionLocal.begin() as session:
-        check_model = session \
-            .query(WeatherModel) \
-            .order_by(WeatherModel.id.desc()) \
-            .filter_by(forecast=data).first()
-        if not check_model:
-            # session.add(WeatherModel(forecast=data))
-            send_curl(data_dict={"forecast": data}, route='weather')
-        else:
-            if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
-                send_curl(data_dict={"forecast": data}, route='weather')
+    with engine.begin() as connection:
+        weather = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
+        df = pd.DataFrame(weather, columns=['forecast', 'date'])
+        df.to_sql('weather', con=connection, if_exists='replace', index=False)
+    # with SessionLocal.begin() as session:
+    #     check_model = session \
+    #         .query(WeatherModel) \
+    #         .order_by(WeatherModel.id.desc()) \
+    #         .filter_by(forecast=data).first()
+    #     if not check_model:
+    #         # session.add(WeatherModel(forecast=data))
+    #         send_curl(data_dict={"forecast": data}, route='weather')
+    #     else:
+    #         if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
+    #             send_curl(data_dict={"forecast": data}, route='weather')
 
 
 def covid_to_db(data):
-    with SessionLocal.begin() as session:
-        check_model = session \
-            .query(CovidModel) \
-            .order_by(CovidModel.id.desc()) \
-            .filter_by(prognosis=data).first()
-        if not check_model:
-            send_curl(data_dict={"prognosis": data}, route='covid')
-        else:
-            if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
-                send_curl(data_dict={"prognosis": data}, route='covid')
+    with engine.begin() as connection:
+        covid = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
+        df = pd.DataFrame(covid, columns=['prognosis', 'date'])
+        df.to_sql('covid', con=connection, if_exists='replace', index=False)
+    # with SessionLocal.begin() as session:
+    #     check_model = session \
+    #         .query(CovidModel) \
+    #         .order_by(CovidModel.id.desc()) \
+    #         .filter_by(prognosis=data).first()
+    #     if not check_model:
+    #         send_curl(data_dict={"prognosis": data}, route='covid')
+    #     else:
+    #         if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
+    #             send_curl(data_dict={"prognosis": data}, route='covid')
 
 
 def phonebook_to_db(df):

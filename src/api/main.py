@@ -1,23 +1,17 @@
-import os
-
 import uvicorn
-from dotenv import load_dotenv
 
 from fastapi import APIRouter, FastAPI
 from fastapi.testclient import TestClient
 from starlette.middleware.cors import CORSMiddleware
 
+from cfg import api_host, api_port
 from src.api.routes.base import users, weather, covid
 from src.api.routes.security import security
 
-load_dotenv()
-host = os.getenv('FASTAPI_HOST')
-port = os.getenv('FASTAPI_PORT')
-origins = ["*"]
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,8 +34,8 @@ client = TestClient(app)
 
 if __name__ == '__main__':
     uvicorn.run('main:app',
-                host=str(host),
-                port=int(port),
+                host=str(api_host),
+                port=int(api_port),
                 reload=True,
                 timeout_keep_alive=0,
                 log_level="info",

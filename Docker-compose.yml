@@ -64,6 +64,19 @@ services:
       - backend
       - frontend
 
+  bot:
+    build:
+      context: .
+      dockerfile: src/bot/Dockerfile
+    container_name: bot
+    environment:
+      TZ: ${DOCKER_TZ}
+    volumes:
+      - ./src/bot:/app/src/bot
+      - ./src/database:/app/src/database
+    networks:
+      - backend
+
   jobs:
     build:
       context: .

@@ -1,13 +1,9 @@
-import json
 from datetime import datetime
 
 import pandas as pd
-import requests
 from fastapi import HTTPException
-from requests.structures import CaseInsensitiveDict
 
-from src.database.models import WeatherModel, CovidModel
-from src.database.sql import SessionLocal, engine
+from src.database.sql import engine
 
 
 def check_exist_in_db(db, model, model_filter, schema_filter):
@@ -29,34 +25,11 @@ def add_to_db(db, model, new_model):
         db.refresh(new_model)
 
 
-def send_curl(data_dict, route):
-    url = f"http://api:8000/{route}"
-
-    headers = CaseInsensitiveDict()
-    headers["accept"] = "application/json"
-    headers["Content-Type"] = "application/json"
-
-    data = json.dumps(data_dict)
-
-    return requests.post(url, headers=headers, data=data)
-
-
 def weather_to_db(data):
     with engine.begin() as connection:
         weather = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
         df = pd.DataFrame(weather, columns=['forecast', 'date'])
         df.to_sql('weather', con=connection, if_exists='replace', index=False)
-    # with SessionLocal.begin() as session:
-    #     check_model = session \
-    #         .query(WeatherModel) \
-    #         .order_by(WeatherModel.id.desc()) \
-    #         .filter_by(forecast=data).first()
-    #     if not check_model:
-    #         # session.add(WeatherModel(forecast=data))
-    #         send_curl(data_dict={"forecast": data}, route='weather')
-    #     else:
-    #         if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
-    #             send_curl(data_dict={"forecast": data}, route='weather')
 
 
 def covid_to_db(data):
@@ -64,16 +37,6 @@ def covid_to_db(data):
         covid = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
         df = pd.DataFrame(covid, columns=['prognosis', 'date'])
         df.to_sql('covid', con=connection, if_exists='replace', index=False)
-    # with SessionLocal.begin() as session:
-    #     check_model = session \
-    #         .query(CovidModel) \
-    #         .order_by(CovidModel.id.desc()) \
-    #         .filter_by(prognosis=data).first()
-    #     if not check_model:
-    #         send_curl(data_dict={"prognosis": data}, route='covid')
-    #     else:
-    #         if check_model.date.strftime("%Y.%m.%d") < datetime.now().strftime("%Y.%m.%d"):
-    #             send_curl(data_dict={"prognosis": data}, route='covid')
 
 
 def phonebook_to_db(df):
@@ -106,3 +69,20 @@ async def caller_recognition(caller, number):
                f'\nот: {recognition.iloc[0]["role"]}\n{recognition.iloc[0]["name"]} {recognition.iloc[0]["surname"]}\n'
     else:
         return f'Входящий звонок\nс номера: {caller}\nна номер: {number}'
+
+
+async def name_recognition(text):
+    with engine.begin() as connection:
+        df = pd.read_sql('phonebook', con=connection)
+    search_name = text.split()
+    name = search_name[1].strip().lower().title()
+    recognition = df[df['name'].str.contains(name)]
+    if recognition.shape[0] > 0:
+        return f'ФИО: {recognition.iloc[0]["name"]} {recognition.iloc[0]["surname"]}\n'\
+               f'Должность: {recognition.iloc[0]["role"]}\n'\
+               f'Отдел: {recognition.iloc[0]["department"]}\n'\
+               f'Внутренний: {recognition.iloc[0]["number"]}\n'\
+               f'Рабочий: {recognition.iloc[0]["work"]}\n'\
+               f'Мобильный: {recognition.iloc[0]["mobile"]}\n'
+    else:
+        return f'Совпадений по запросу "{name}" не найдено'

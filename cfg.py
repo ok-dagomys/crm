@@ -39,6 +39,15 @@ else:
     api_port = os.getenv('DOCKER_FASTAPI_PORT')
 
 
+# Telegram bot
+if check_workdir() == 'local':
+    bot_token = os.getenv('PRIVATE_TOKEN')
+    bot_id = os.getenv('PRIVATE_ID')
+else:
+    bot_token = os.getenv('GROUP_TOKEN')
+    bot_id = os.getenv('GROUP_ID')
+
+
 # Tasks
 if check_workdir() == 'local':
     task_source = os.getenv('LOCAL_TASK_SOURCE')

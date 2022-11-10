@@ -25,20 +25,6 @@ def add_to_db(db, model, new_model):
         db.refresh(new_model)
 
 
-def weather_to_db(data):
-    with engine.begin() as connection:
-        weather = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
-        df = pd.DataFrame(weather, columns=['forecast', 'date'])
-        df.to_sql('weather', con=connection, if_exists='replace', index=False)
-
-
-def covid_to_db(data):
-    with engine.begin() as connection:
-        covid = [[data, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
-        df = pd.DataFrame(covid, columns=['prognosis', 'date'])
-        df.to_sql('covid', con=connection, if_exists='replace', index=False)
-
-
 def phonebook_to_db(df):
     with engine.begin() as connection:
         df.to_sql('phonebook', con=connection, if_exists='replace')

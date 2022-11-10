@@ -10,7 +10,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from cfg import task_source, task_registry, task_archive
-from src.database.service import task_to_db
+from src.service.service import task_to_db
 
 
 logging.basicConfig(level=logging.INFO)

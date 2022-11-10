@@ -1,92 +1,56 @@
-import logging
 import asyncio
-from datetime import datetime
-from aiogram import Bot, Dispatcher, executor, types
+import logging
+from asyncio import set_event_loop, new_event_loop
 
-from cfg import bot_token, bot_id
-from src.database.service import name_recognition
+import aioschedule
 
-id_list = []
-bot = Bot(token=bot_token)
-dp = Dispatcher(bot)
-logging.basicConfig(level=logging.INFO)
-
-
-def date_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+from cfg import date_time
+from src.bot.telegram import bot_run, edit_message, send_message
+from src.database.sql import check_table_exist
+from src.service.bot import find_pined_message_id
+from src.service.covid import check_covid_status, covid_to_db
+from src.service.weather import check_weather_status, weather_to_db
 
 
-async def fn(_):
-    print('Aiogram bot')
-
-
-async def send_message(message):
-    bot_message = await bot.send_message(bot_id, message)
-    message_id = bot_message.message_id
-    id_list.append(message_id)
-    await asyncio.sleep(1)
-    print(f"{date_time()} | Bot send message (id: {message_id})")
-    return message_id
-
-
-async def edit_message(message, message_id):
-    await bot.edit_message_text(message, bot_id, message_id)
-    print(f"{date_time()} | Bot edit message (id: {message_id})")
-    await asyncio.sleep(1)
-
-
-async def delete_message(message_id):
-    await bot.delete_message(bot_id, message_id)
-    print(f"{date_time()} | Bot delete message (id: {message_id})")
-    await asyncio.sleep(1)
-
-
-async def pin_message(message_id):
-    await bot.pin_chat_message(bot_id, message_id)
-    print(f"{date_time()} | Bot pin message (id: {message_id})")
-    await asyncio.sleep(1)
-
-
-@dp.message_handler(commands=['test'])
-async def bot_answer(message: types.Message):
-    await send_message('Тест пройден!')
-    await message.delete()
-    await asyncio.sleep(1)
-
-
-# delete all pinned message
-@dp.message_handler(content_types=['pinned_message'])
-async def delete_pinned(message: types.Message):
-    print(f"{date_time()} | Bot delete pinned_message")
-    await message.delete()
-
-
-@dp.message_handler(commands=['?'])
-async def bot_answer(message: types.Message):
-    search = await name_recognition(message.text)
-    await send_message(search)
-    await message.delete()
+async def check_weather():
+    if check_table_exist('weather'):
+        forecast, status = check_weather_status()
+        if status == 'new':
+            try:
+                await edit_message(forecast, find_pined_message_id())
+                weather_to_db(forecast, 'send')
+            except Exception as ex:
+                logging.info(f' {date_time()} | {ex}\n')
     await asyncio.sleep(0.1)
 
 
-async def on_startup(_):
-    await send_message('Бот приступил к работе!')
-    logging.info('Bot start working')
-    await asyncio.sleep(1)
+async def check_covid():
+    if check_table_exist('covid'):
+        prognosis, status = check_covid_status()
+        if status == 'new':
+            try:
+                await send_message(prognosis)
+                covid_to_db(prognosis, 'send')
+            except Exception as ex:
+                logging.info(f' {date_time()} | {ex}\n')
+    await asyncio.sleep(0.1)
 
 
-async def on_shutdown(_):
-    for message_id in id_list:
-        await delete_message(message_id)
-    await asyncio.sleep(1)
+async def scheduler():
+    aioschedule.every(5).to(10).seconds.do(check_weather)
+    aioschedule.every(5).to(10).seconds.do(check_covid)
+    while True:
+        await aioschedule.run_pending()
+        await asyncio.sleep(0.1)
 
 
-def bot_run(startup=fn, shutdown=fn):
-    executor.start_polling(dp,
-                           skip_updates=True,
-                           on_startup=(on_startup, startup),
-                           on_shutdown=(on_shutdown, shutdown))
+async def tasks():
+    asyncio.create_task(scheduler())
+    await asyncio.sleep(0.1)
 
+
+set_event_loop(new_event_loop())
+asyncio.get_event_loop().run_until_complete(tasks())
 
 if __name__ == '__main__':
     bot_run()

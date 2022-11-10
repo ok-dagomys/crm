@@ -1,10 +1,10 @@
 import logging
-from datetime import datetime
 
 import aiohttp
 import asyncio
 
-from src.database.service import weather_to_db
+from cfg import date_time
+from src.service.weather import weather_status, weather_to_db
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,6 +25,7 @@ async def weather_request():
                 forecast = await response.text() if response.status == 200 else f'Cannot connect to host: {url}'
                 # print(f'Weather forecast {forecast} in {city}')
                 await asyncio.sleep(0.1)
+                forecast = 'test: ⛅ 🌡️+22°C 🌬️↑4.2m/s'
                 return forecast
 
         except Exception as ex:
@@ -34,8 +35,9 @@ async def weather_request():
 async def check_weather():
     task = asyncio.create_task(weather_request())
     await task
-    weather_to_db(task.result())
-    logging.info(f' {datetime.now().strftime("%Y.%m.%d-%H:%M:%S")} | Weather checked\n')
+    if weather_status(task.result()) == 'new':
+        weather_to_db(task.result(), 'new')
+    logging.info(f' {date_time()} | Weather checked\n')
     await asyncio.sleep(0.1)
 
 

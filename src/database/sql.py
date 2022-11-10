@@ -1,3 +1,4 @@
+import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -20,3 +21,7 @@ def get_db():
         session.commit()
     finally:
         session.close()
+
+
+def check_table_exist(name):
+    return sqlalchemy.inspect(engine).has_table(name)

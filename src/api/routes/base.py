@@ -6,7 +6,7 @@ from src.api.schemas.covid import Covid, CovidCreate
 from src.api.schemas.users import User, UserCreate
 from src.api.schemas.weather import Weather, WeatherCreate
 from src.database.models import UserModel, WeatherModel, CovidModel
-from src.database.service import add_to_db
+from src.service.service import add_to_db
 from src.database.sql import get_db
 
 

@@ -9,7 +9,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from cfg import phonebook_source, phonebook_destination
-from src.database.service import phonebook_to_db
+from src.service.service import phonebook_to_db
 
 
 date = datetime.now().strftime('%Y-%m-%d')

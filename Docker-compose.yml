@@ -12,6 +12,7 @@ services:
     volumes:
       - ./src/asterisk:/app/src/asterisk
       - ./src/database:/app/src/database
+      - ./src/database:/app/src/service
     depends_on:
       - mysql
     networks:
@@ -56,6 +57,7 @@ services:
     volumes:
       - ./src/api:/app/src/api
       - ./src/database:/app/src/database
+      - ./src/database:/app/src/service
     depends_on:
       - phpmyadmin
     ports:
@@ -74,6 +76,7 @@ services:
     volumes:
       - ./src/bot:/app/src/bot
       - ./src/database:/app/src/database
+      - ./src/database:/app/src/service
     networks:
       - backend
 
@@ -89,6 +92,7 @@ services:
       - share:/mnt/share
       - ./src/jobs:/app/src/jobs
       - ./src/database:/app/src/database
+      - ./src/database:/app/src/service
     depends_on:
       - asterisk
       - api
@@ -107,6 +111,7 @@ services:
       - share:/mnt/share
       - ./src/test:/app/src/test
       - ./src/database:/app/src/database
+      - ./src/database:/app/src/service
     networks:
       - backend
       - frontend

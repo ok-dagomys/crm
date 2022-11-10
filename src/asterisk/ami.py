@@ -4,7 +4,7 @@ import logging
 from panoramisk import Manager, Message
 
 from cfg import ami_host, ami_port, ami_username, ami_secret
-from src.database.service import call_to_db
+from src.service.service import call_to_db
 
 try:
     manager = Manager(

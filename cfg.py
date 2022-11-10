@@ -1,8 +1,13 @@
 import os
+from datetime import datetime
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def date_time():
+    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
 
 def check_workdir():
@@ -40,6 +45,7 @@ else:
 
 
 # Telegram bot
+id_list = []
 if check_workdir() == 'local':
     bot_token = os.getenv('PRIVATE_TOKEN')
     bot_id = os.getenv('PRIVATE_ID')

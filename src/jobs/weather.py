@@ -25,7 +25,6 @@ async def weather_request():
                 forecast = await response.text() if response.status == 200 else f'Cannot connect to host: {url}'
                 # print(f'Weather forecast {forecast} in {city}')
                 await asyncio.sleep(0.1)
-                forecast = 'test: ⛅ 🌡️+22°C 🌬️↑4.2m/s'
                 return forecast
 
         except Exception as ex:

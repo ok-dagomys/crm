@@ -10,8 +10,7 @@ import pandas as pd
 from tqdm import tqdm
 
 from cfg import task_source, task_registry, task_archive
-from src.service.service import task_to_db
-
+from src.service.tasks import task_to_db
 
 logging.basicConfig(level=logging.INFO)
 file_list = []
@@ -95,7 +94,7 @@ def transfer_to_archive(f_docx, f_date):
             pbar.update(10)
             pbar.set_description("Transferring...")
     logging.info(f' Saved in archive as {f_date.strftime("%Y.%m.%d")} - {f_docx.split("+", 5)[-1].strip()}')
-    task_to_db(f_docx.split("+", 5)[-1].strip(), 'Заявка исполнена и перенесена в архив')
+    task_to_db('new', f_docx.split("+", 5)[-1].strip(), 'Заявка исполнена и перенесена в архив')
 
 
 async def scan_tasks():

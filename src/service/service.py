@@ -30,13 +30,6 @@ def phonebook_to_db(df):
         df.to_sql('phonebook', con=connection, if_exists='replace')
 
 
-def task_to_db(file, status):
-    with engine.begin() as connection:
-        tasks = [[file, status, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]
-        df = pd.DataFrame(tasks, columns=['file', 'status', 'date'])
-        df.to_sql('tasks', con=connection, if_exists='append', index=False)
-
-
 def call_to_db(caller, number):
     with engine.begin() as connection:
         calls = [[caller, number, datetime.now().strftime("%Y.%m.%d-%H:%M:%S")]]

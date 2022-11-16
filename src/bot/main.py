@@ -9,6 +9,7 @@ from src.bot.telegram import bot_run, edit_message, send_message
 from src.database.sql import check_table_exist
 from src.service.bot import find_pined_message_id
 from src.service.covid import check_covid_status, covid_to_db
+from src.service.tasks import task_new_status
 from src.service.weather import check_weather_status, weather_to_db
 
 
@@ -36,9 +37,21 @@ async def check_covid():
     await asyncio.sleep(0.1)
 
 
+async def check_tasks():
+    if check_table_exist('tasks'):
+        task = task_new_status()
+        if task:
+            try:
+                await send_message(f'{task[1]} - {task[2]}')
+            except Exception as ex:
+                logging.info(f' {date_time()} | {ex}\n')
+    await asyncio.sleep(0.1)
+
+
 async def scheduler():
     aioschedule.every(5).to(10).seconds.do(check_weather)
     aioschedule.every(5).to(10).seconds.do(check_covid)
+    aioschedule.every(5).to(10).seconds.do(check_tasks)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(0.1)

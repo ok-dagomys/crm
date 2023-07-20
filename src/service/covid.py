@@ -21,6 +21,6 @@ def check_covid_status():
 
 def covid_to_db(prognosis, status):
     with engine.begin() as connection:
-        covid = [[status, prognosis, date_time()]]
-        df = pd.DataFrame(covid, columns=['status', 'prognosis', 'date'])
+        covid = [[status, prognosis, date_time()[0], date_time()[1]]]
+        df = pd.DataFrame(covid, columns=['status', 'prognosis', 'date', 'time'])
         df.to_sql('covid', con=connection, if_exists='replace', index=False)

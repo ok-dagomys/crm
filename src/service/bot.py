@@ -16,8 +16,8 @@ def find_pined_message_id():
 
 def bot_to_db(data, message_id):
     with engine.begin() as connection:
-        bot = [[data, message_id, date_time()]]
-        df = pd.DataFrame(bot, columns=['logs', 'message_id', 'date'])
+        bot = [[data, message_id, date_time()[0], date_time()[1]]]
+        df = pd.DataFrame(bot, columns=['logs', 'message_id', 'date', 'time'])
         df.to_sql('bot', con=connection, if_exists='append', index=False)
 
 

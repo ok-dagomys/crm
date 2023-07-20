@@ -22,6 +22,6 @@ def check_weather_status():
 
 def weather_to_db(forecast, status):
     with engine.begin() as connection:
-        weather = [[status, forecast, date_time(), find_pined_message_id()]]
-        df = pd.DataFrame(weather, columns=['status', 'forecast', 'date', 'message_id'])
+        weather = [[status, forecast, date_time()[0], date_time()[1], find_pined_message_id()]]
+        df = pd.DataFrame(weather, columns=['status', 'forecast', 'date', 'time', 'message_id'])
         df.to_sql('weather', con=connection, if_exists='replace', index=False)

@@ -6,9 +6,9 @@ from aiogram.utils import executor
 
 from cfg import bot_token, bot_id, id_list, date_time
 from src.service.bot import drop_bot_table, bot_to_db
-from src.service.service import name_recognition
+from src.service.phonebook import name_recognition
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.WARNING)
 bot = Bot(token=bot_token)
 dp = Dispatcher(bot)
 
@@ -69,14 +69,14 @@ async def bot_answer(message: types.Message):
 
 async def on_startup(_):
     message_id = await send_message('Бот приступил к работе!')
-    await pin_message(message_id)
-    logging.info('Bot start working')
+    # await pin_message(message_id)
+    logging.warning('Bot start working')
     await asyncio.sleep(1)
 
 
 async def on_shutdown(_):
-    for message_id in id_list:
-        await delete_message(message_id)
+    # for message_id in id_list:
+    #     await delete_message(message_id)
     drop_bot_table()
     await asyncio.sleep(1)
 

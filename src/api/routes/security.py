@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.api.authorization import AuthHandler
 from src.api.schemas.users import UserCreate
 from src.database.models import UserModel
-from src.service.service import add_to_db, check_name_exist_in_db
+from src.service.api import add_to_db, check_name_exist_in_db
 from src.database.sql import get_db
 
 security = APIRouter()

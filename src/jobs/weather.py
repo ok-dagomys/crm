@@ -34,7 +34,7 @@ async def weather_request():
 async def check_weather():
     task = asyncio.create_task(weather_request())
     await task
-    if weather_status(task.result()) == 'new':
+    if task.result() and weather_status(task.result()) == 'new':
         weather_to_db(task.result(), 'new')
     logging.info(f' {date_time()} | Weather checked\n')
     await asyncio.sleep(0.1)

@@ -7,7 +7,9 @@ load_dotenv()
 
 
 def date_time():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    date = datetime.now().strftime('%Y-%m-%d')
+    time = datetime.now().strftime('%H:%M:%S')
+    return date, time
 
 
 def check_workdir():

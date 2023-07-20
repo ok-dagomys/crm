@@ -4,7 +4,7 @@ import logging
 from panoramisk import Manager, Message
 
 from cfg import ami_host, ami_port, ami_username, ami_secret
-from src.service.service import call_to_db
+from src.service.phonebook import call_to_db, edit_last_call
 
 try:
     manager = Manager(
@@ -56,16 +56,18 @@ async def ami_callback(mngr: Manager, msg: Message):
 
 
 @manager.register_event('Newchannel')
-async def callback(mngr: Manager, msg: Message):
+async def callback_channel(mngr: Manager, msg: Message):
     if msg.ChannelStateDesc == 'Down' and msg.Context != 'from-internal':
         if msg.CallerIDNum and msg.Exten:
             caller.append(msg.CallerIDNum)
             number.append(msg.Exten)
             call[msg.CallerIDNum] = 'dial'
             # print(call)
+            # print(msg)
             logging.info(f'Incoming call\nfrom number: {msg.CallerIDNum}\nto number: {msg.Exten}')
-            call_to_db(msg.CallerIDNum, msg.Exten)
+            call_to_db('new', msg.CallerIDNum, msg.Exten)
     await asyncio.sleep(1)
+    return msg.CallerIDNum
 
 
 @manager.register_event('Dial')
@@ -74,8 +76,9 @@ async def callback(mngr: Manager, msg: Message):
         status.append('end')
         call[tuple(caller[:-1])] = 'end'
         # print(call)
-        # print(msg)
+        # print(f'end: {msg}')
         logging.info('Call ended')
+        edit_last_call('answered')
     await asyncio.sleep(1)
 
 

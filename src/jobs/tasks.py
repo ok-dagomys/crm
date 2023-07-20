@@ -110,7 +110,7 @@ async def scan_tasks():
         elif file.lower().endswith('.docx') and '~' not in file:
             if file.count('+') < 5:
                 make_file_list(file, date)
-            elif file.count('+') == 5:
+            elif file.count('+') >= 5:
                 transfer_to_archive(file, date)
 
     add_to_registry(file_list)
